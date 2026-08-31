@@ -1,0 +1,10 @@
+{
+  "description": "A trusted peer-to-peer marketplace for Libyan gamers to buy and sell used PlayStation and PC gaming products, ensuring secure transactions and product inspections.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

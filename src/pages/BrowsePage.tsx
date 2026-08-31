@@ -1,0 +1,188 @@
+import { useState, useMemo } from 'react'
+import { Navigate } from '../types'
+import { products, categories } from '../data/mock'
+import ProductCard from '../components/ProductCard'
+
+interface BrowsePageProps {
+  navigate: Navigate
+  data?: { category?: string; query?: string }
+  favorites: number[]
+  onToggleFavorite: (id: number) => void
+}
+
+const cities = ['الكل', 'طرابلس', 'بنغازي', 'مصراتة', 'الزاوية', 'سبها']
+const conditions = [
+  { id: 'all', label: 'الكل' },
+  { id: 'excellent', label: 'ممتازة' },
+  { id: 'good', label: 'جيدة' },
+  { id: 'fair', label: 'مقبولة' },
+]
+
+export default function BrowsePage({ navigate, data, favorites, onToggleFavorite }: BrowsePageProps) {
+  const [selectedCategory, setSelectedCategory] = useState(data?.category || 'all')
+  const [selectedCity, setSelectedCity] = useState('الكل')
+  const [selectedCondition, setSelectedCondition] = useState('all')
+  const [sortBy, setSortBy] = useState('newest')
+  const [priceMin, setPriceMin] = useState('')
+  const [priceMax, setPriceMax] = useState('')
+  const [search, setSearch] = useState(data?.query || '')
+  const [filterOpen, setFilterOpen] = useState(false)
+
+  const filtered = useMemo(() => {
+    let list = [...products]
+    if (selectedCategory !== 'all') list = list.filter((p) => p.category === selectedCategory)
+    if (selectedCity !== 'الكل') list = list.filter((p) => p.city === selectedCity)
+    if (selectedCondition !== 'all') list = list.filter((p) => p.conditionLevel === selectedCondition)
+    if (search) list = list.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()))
+    if (priceMin) list = list.filter((p) => p.price >= Number(priceMin))
+    if (priceMax) list = list.filter((p) => p.price <= Number(priceMax))
+    switch (sortBy) {
+      case 'price-asc': return list.sort((a, b) => a.price - b.price)
+      case 'price-desc': return list.sort((a, b) => b.price - a.price)
+      case 'views': return list.sort((a, b) => (b.views || 0) - (a.views || 0))
+      default: return list
+    }
+  }, [selectedCategory, selectedCity, selectedCondition, sortBy, search, priceMin, priceMax])
+
+  return (
+    <div className="min-h-screen bg-obsidian pt-24 md:pt-28 pb-16 md:pb-0">
+      {/* Sticky category pills */}
+      <div className="sticky top-20 z-40 bg-obsidian/90 backdrop-blur-xl border-b border-white/6">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              selectedCategory === 'all' ? 'bg-brand text-white glow-brand' : 'glass text-slate-400 hover:text-white border border-white/8'
+            }`}
+          >
+            الكل
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 ${
+                selectedCategory === cat.id ? 'bg-brand text-white glow-brand' : 'glass text-slate-400 hover:text-white border border-white/8'
+              }`}
+            >
+              <span>{cat.icon}</span>
+              <span>{cat.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="flex gap-6">
+          {/* Sidebar */}
+          <aside className="hidden lg:block w-56 flex-shrink-0">
+            <div className="glass rounded-2xl border border-white/8 p-5 sticky top-36 space-y-5">
+              <h3 className="font-bold text-white text-sm">تصفية النتائج</h3>
+
+              <div>
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">المدينة</div>
+                <div className="space-y-1.5">
+                  {cities.map((c) => (
+                    <label key={c} className="flex items-center gap-2 cursor-pointer group">
+                      <input type="radio" name="city" checked={selectedCity === c} onChange={() => setSelectedCity(c)} className="accent-[#0070D1]" />
+                      <span className={`text-sm transition-colors ${selectedCity === c ? 'text-brand-light font-semibold' : 'text-slate-400 group-hover:text-white'}`}>{c}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">الحالة</div>
+                <div className="space-y-1.5">
+                  {conditions.map((c) => (
+                    <label key={c.id} className="flex items-center gap-2 cursor-pointer group">
+                      <input type="radio" name="condition" checked={selectedCondition === c.id} onChange={() => setSelectedCondition(c.id)} className="accent-[#0070D1]" />
+                      <span className={`text-sm transition-colors ${selectedCondition === c.id ? 'text-brand-light font-semibold' : 'text-slate-400 group-hover:text-white'}`}>{c.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">نطاق السعر (د.ل)</div>
+                <div className="flex gap-2">
+                  <input type="number" placeholder="من" value={priceMin} onChange={(e) => setPriceMin(e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm bg-white/6 border border-white/10 rounded-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-accent/40" />
+                  <input type="number" placeholder="إلى" value={priceMax} onChange={(e) => setPriceMax(e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm bg-white/6 border border-white/10 rounded-lg text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-accent/40" />
+                </div>
+              </div>
+
+              <button
+                onClick={() => { setSelectedCity('الكل'); setSelectedCondition('all'); setPriceMin(''); setPriceMax(''); setSelectedCategory('all') }}
+                className="w-full py-2 text-sm text-slate-500 hover:text-white border border-white/8 rounded-xl hover:border-white/20 transition-colors"
+              >
+                إعادة تعيين
+              </button>
+            </div>
+          </aside>
+
+          {/* Main */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+              <div className="text-sm text-slate-500"><span className="font-bold text-white">{filtered.length}</span> نتيجة</div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setFilterOpen(!filterOpen)}
+                  className={`lg:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${filterOpen ? 'bg-brand text-white' : 'glass border border-white/10 text-slate-300'}`}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
+                  </svg>
+                  تصفية
+                </button>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 glass border border-white/10 rounded-xl text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-accent/40 bg-surface">
+                  <option value="newest" className="bg-surface">الأحدث</option>
+                  <option value="price-asc" className="bg-surface">الأقل سعراً</option>
+                  <option value="price-desc" className="bg-surface">الأعلى سعراً</option>
+                  <option value="views" className="bg-surface">الأكثر مشاهدة</option>
+                </select>
+              </div>
+            </div>
+
+            {filterOpen && (
+              <div className="lg:hidden glass rounded-2xl border border-white/8 p-4 mb-5 grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs font-bold text-slate-500 mb-1.5">المدينة</div>
+                  <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} className="w-full px-2 py-2 text-sm bg-surface border border-white/10 rounded-lg text-white focus:outline-none">
+                    {cities.map((c) => <option key={c} className="bg-surface">{c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-500 mb-1.5">الحالة</div>
+                  <select value={selectedCondition} onChange={(e) => setSelectedCondition(e.target.value)} className="w-full px-2 py-2 text-sm bg-surface border border-white/10 rounded-lg text-white focus:outline-none">
+                    {conditions.map((c) => <option key={c.id} value={c.id} className="bg-surface">{c.label}</option>)}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {filtered.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filtered.map((product) => (
+                  <ProductCard key={product.id} product={product} navigate={navigate} isFavorited={favorites.includes(product.id)} onToggleFavorite={onToggleFavorite} />
+                ))}
+              </div>
+            ) : (
+              <div className="py-24 text-center">
+                <div className="w-20 h-20 rounded-3xl glass border border-white/8 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-10 h-10 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <div className="text-white font-bold text-lg mb-1">لا توجد منتجات</div>
+                <div className="text-slate-500 text-sm">جرب تعديل الفلاتر.</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
