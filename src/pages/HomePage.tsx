@@ -8,56 +8,39 @@ import ScrollReveal from '../components/ScrollReveal'
 
 function AutoPlayVideo({ src, className }: { src: string; className: string }) {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [videoBlobUrl, setVideoBlobUrl] = useState<string>('')
-
-  useEffect(() => {
-    let isMounted = true
-    let createdUrl = ''
-
-    fetch(src)
-      .then((res) => {
-        if (!res.ok) throw new Error('Fetch failed')
-        return res.blob()
-      })
-      .then((blob) => {
-        if (!isMounted) return
-        createdUrl = URL.createObjectURL(blob)
-        setVideoBlobUrl(createdUrl)
-      })
-      .catch(() => {
-        if (isMounted) setVideoBlobUrl(src)
-      })
-
-    return () => {
-      isMounted = false
-      if (createdUrl && createdUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(createdUrl)
-      }
-    }
-  }, [src])
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video || !videoBlobUrl) return
+    if (!video) return
 
-    video.defaultMuted = true
     video.muted = true
+    video.defaultMuted = true
     video.playsInline = true
-    video.play().catch(() => {})
-  }, [videoBlobUrl])
+
+    const playVideo = () => {
+      video.play().catch(() => {})
+    }
+
+    if (video.readyState >= 2) {
+      playVideo()
+    } else {
+      video.addEventListener('loadeddata', playVideo, { once: true })
+    }
+  }, [src])
 
   return (
     <video
       ref={videoRef}
-      src={videoBlobUrl || undefined}
+      src={src}
       className={className}
       autoPlay
       loop
       muted
       playsInline
-      controlsList="nodownload nofailback"
-      disablePictureInPicture
-    />
+      preload="auto"
+    >
+      <source src={src} type="video/mp4" />
+    </video>
   )
 }
 
