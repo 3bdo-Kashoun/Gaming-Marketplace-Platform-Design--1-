@@ -44,6 +44,75 @@ function AutoPlayVideo({ src, className }: { src: string; className: string }) {
   )
 }
 
+function CategorySvgIcon({ id, className = "w-5 h-5 text-accent" }: { id: string; className?: string }) {
+  switch (id) {
+    case 'ps5-games':
+      // PS5 Gamepad Controller (Handles, D-Pad, Buttons)
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 11h2m-1-1v2m8-1h.01m1.99-1h.01m-1 2h.01m-6-1a1 1 0 11-2 0 1 1 0 012 0zm9 0a1 1 0 11-2 0 1 1 0 012 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 19.5a1.5 1.5 0 01-1.41-1.01l-1.6-4.8a3.75 3.75 0 01.32-3.32l.85-1.28A3.75 3.75 0 019.43 7.5h5.14a3.75 3.75 0 013.02 1.59l.85 1.28a3.75 3.75 0 01.32 3.32l-1.6 4.8a1.5 1.5 0 01-1.41 1.01h-.44a1.5 1.5 0 01-1.34-.83l-1.2-2.4a1.5 1.5 0 00-2.68 0l-1.2 2.4a1.5 1.5 0 01-1.34.83h-.44z" />
+        </svg>
+      )
+    case 'ps4-games':
+      // Compact Disc / Game Disc with inner hole & reflection ring
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="3" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3a9 9 0 016.364 2.636" />
+        </svg>
+      )
+    case 'consoles':
+      // PlayStation Console Hardware Unit + Gamepad Controller
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <rect x="3" y="6" width="18" height="12" rx="2" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7 10h2m-1-1v2m8-1h.01m1.99-1h.01m-1 2h.01M6 15h12" />
+        </svg>
+      )
+    case 'controllers':
+      // DualSense Gamepad Controller
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 11h2m-1-1v2m8-1h.01m1.99-1h.01m-1 2h.01" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 19.5a1.5 1.5 0 01-1.41-1.01l-1.6-4.8a3.75 3.75 0 01.32-3.32l.85-1.28A3.75 3.75 0 019.43 7.5h5.14a3.75 3.75 0 013.02 1.59l.85 1.28a3.75 3.75 0 01.32 3.32l-1.6 4.8a1.5 1.5 0 01-1.41 1.01h-.44a1.5 1.5 0 01-1.34-.83l-1.2-2.4a1.5 1.5 0 00-2.68 0l-1.2 2.4a1.5 1.5 0 01-1.34.83h-.44z" />
+        </svg>
+      )
+    case 'headsets':
+      // Over-Ear Gaming Headphones (Headband + Ear Cups)
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12v3a3 3 0 003 3h1.5a1.5 1.5 0 001.5-1.5v-3a1.5 1.5 0 00-1.5-1.5H6a1.5 1.5 0 00-1.5 1.5zm15 0v3a3 3 0 01-3 3h-1.5a1.5 1.5 0 01-1.5-1.5v-3a1.5 1.5 0 011.5-1.5H18a1.5 1.5 0 011.5 1.5z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0115 0" />
+        </svg>
+      )
+    case 'accessories':
+      // Lightning Power Bolt / Accessories
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+        </svg>
+      )
+    case 'pc-gaming':
+      // Widescreen Gaming Monitor + PC Gaming Desktop Rig Casing
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <rect x="2" y="4" width="14" height="10" rx="1.5" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 14v3m6-3v3m-5 0h8" />
+          <rect x="18" y="7" width="4" height="10" rx="1" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20 9.5h.01M20 12h.01" />
+        </svg>
+      )
+    default:
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 11h2m-1-1v2m8-1h.01m1.99-1h.01m-1 2h.01" />
+        </svg>
+      )
+  }
+}
+
 interface HomePageProps {
   navigate: Navigate
   favorites: number[]
@@ -245,7 +314,9 @@ export default function HomePage({ navigate, favorites, onToggleFavorite }: Home
                 <img src={categories[0].image} alt={categories[0].label} className="category-card-img absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tl from-brand/80 via-brand/30 to-transparent" />
                 <div className="relative z-10">
-                  <div className="text-3xl mb-1">{categories[0].icon}</div>
+                  <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 text-accent shadow-[0_0_15px_rgba(0,240,255,0.25)] backdrop-blur-md flex items-center justify-center mb-2.5 transition-transform duration-300 group-hover:scale-110">
+                    <CategorySvgIcon id={categories[0].id} className="w-5 h-5 text-accent" />
+                  </div>
                   <div className="text-white font-black text-lg whitespace-nowrap">{categories[0].label}</div>
                   <div className="text-white/70 text-xs mt-0.5 whitespace-nowrap">{categories[0].count} منتج متاح</div>
                 </div>
@@ -262,7 +333,9 @@ export default function HomePage({ navigate, favorites, onToggleFavorite }: Home
                   <img src={cat.image} alt={cat.label} className="category-card-img absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="relative z-10">
-                    <div className="text-xl mb-0.5">{cat.icon}</div>
+                    <div className="w-8 h-8 rounded-lg bg-accent/20 border border-accent/40 text-accent shadow-[0_0_12px_rgba(0,240,255,0.2)] backdrop-blur-md flex items-center justify-center mb-1.5 transition-transform duration-300 group-hover:scale-110">
+                      <CategorySvgIcon id={cat.id} className="w-4 h-4 text-accent" />
+                    </div>
                     <div className="text-white font-bold text-xs whitespace-nowrap">{cat.label}</div>
                     {'count' in cat && <div className="text-white/60 text-[10px] whitespace-nowrap">{cat.count} منتج</div>}
                   </div>
